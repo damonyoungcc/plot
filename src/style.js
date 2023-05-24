@@ -320,16 +320,15 @@ function clipDefs({ownerSVGElement}) {
 }
 
 // Note: may mutate selection.node!
-const frame = Symbol("frame");
 function applyClip(selection, mark, dimensions, context) {
   let clipUrl;
   switch (mark.clip) {
     case "frame": {
-      const clips = context.clips ?? (context.clips = new WeakMap());
-      if (!clips.has(frame)) {
+      const clips = context.clips ?? (context.clips = new Map());
+      if (!clips.has("frame")) {
         const {width, height, marginLeft, marginRight, marginTop, marginBottom} = dimensions;
         const id = getClipId();
-        clips.set(frame, id);
+        clips.set("frame", id);
         clipDefs(context)
           .append("clipPath")
           .attr("id", id)
@@ -343,23 +342,23 @@ function applyClip(selection, mark, dimensions, context) {
         this.appendChild(selection.node());
         selection.node = () => this; // Note: mutation!
       });
-      clipUrl = `url(#${clips.get(frame)})`;
+      clipUrl = `url(#${clips.get("frame")})`;
       break;
     }
     case "sphere": {
-      const clips = context.clips ?? (context.clips = new WeakMap());
+      const clips = context.clips ?? (context.clips = new Map());
       const {projection} = context;
       if (!projection) throw new Error(`the "sphere" clip option requires a projection`);
-      if (!clips.has(projection)) {
+      if (!clips.has("projection")) {
         const id = getClipId();
-        clips.set(projection, id);
+        clips.set("projection", id);
         clipDefs(context)
           .append("clipPath")
           .attr("id", id)
           .append("path")
           .attr("d", geoPath(projection)({type: "Sphere"}));
       }
-      clipUrl = `url(#${clips.get(projection)})`;
+      clipUrl = `url(#${clips.get("projection")})`;
       break;
     }
   }
