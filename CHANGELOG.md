@@ -4,7 +4,7 @@ Year: **Current (2023)** · [2022](./CHANGELOG-2022.md) · [2021](./CHANGELOG-20
 
 ## 0.6.7
 
-*Not yet released. These are forthcoming changes in the main branch.*
+[Released May 24, 2023.](https://github.com/observablehq/plot/releases/tag/v0.6.7)
 
 The new [tip mark](https://observablehq.com/plot/marks/tip) displays text, or name-value pairs derived from channels, in a floating box anchored to a given position in **x** and **y**. The tip mark is often paired with the new [pointer interaction](https://observablehq.com/plot/interactions/pointer) such that only the point closest to the pointer is rendered, allowing the tip mark to reveal details interactively by hovering the chart.
 
@@ -65,7 +65,7 @@ Plot.plot({
 
 The pointer interaction supports both two-dimensional (pointer) and one-dimensional (pointerX and pointerY) pointing modes. Above, one-dimensional pointing is used for a time-series chart to find the closest *x*-value; below, two-dimensional pointing is used for a scatterplot to find the closest point in *x* and *y*.
 
-The pointer interaction also powers the new [crosshair mark](https://observablehq.com/plot/marks/crosshair) which shows the *x* (horizontal↔︎ position) and *y* (vertical↕︎ position) value of the point closest to the pointer on the bottom and left sides of the frame, respectively.
+The pointer interaction also powers the new [crosshair mark](https://observablehq.com/plot/interactions/crosshair) which shows the *x* (horizontal↔︎ position) and *y* (vertical↕︎ position) value of the point closest to the pointer on the bottom and left sides of the frame, respectively.
 
 <img src="./img/crosshair-dot.webp" width="640" alt="A scatterplot of penguins, comparing culmen depth (y) and culmen length (x); a pointer moves around the chart highlighting the x and y values of the closest point.">
 
@@ -79,6 +79,8 @@ Plot.plot({
 ```
 
 The pointer interaction (and by extension the crosshair mark and **tip** mark option) supports “click-to-stick”: if you click on the chart, the currently-focused point will remain locked until you click again. By temporarily locking the pointer, you can select text from the tip for copy and paste.
+
+The pointer interaction also emits an [input event](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/input_event) when the focused point changes, and assigns the generated plot’s value to the corresponding data. This allows event listeners to react to pointing, and supports [Observable views](https://observablehq.com/@observablehq/views).
 
 In addition to these exciting new interaction features, Plot 0.6.7 includes a variety of improvements and bug fixes.
 

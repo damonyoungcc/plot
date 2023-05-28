@@ -1,6 +1,6 @@
 import * as Plot from "@observablehq/plot";
 import * as d3 from "d3";
-import assert from "assert";
+import assert from "../assert.js";
 import it from "../jsdom.js";
 
 it("Plot throws an error if an ordinal position scale has a huge inferred domain", () => {
@@ -410,6 +410,23 @@ it("plot(…).scale(name) handles a reversed diverging scale with a descending d
   });
 });
 
+it("plot(…).scale(name) ignores extra domain elements with a diverging scale", async () => {
+  const plot = assert.warns(
+    () => Plot.plot({color: {type: "diverging", domain: [-5, 5, 10]}}),
+    /domain contains extra/
+  );
+  const {interpolate, ...color} = plot.scale("color");
+  scaleEqual(color, {
+    type: "diverging",
+    symmetric: false,
+    domain: [-5, 5],
+    pivot: 0,
+    clamp: false
+  });
+  const expected = d3.scaleDiverging([-5, 0, 5], d3.interpolateRdBu);
+  for (const t of d3.range(-5, 6)) assert.strictEqual(color.apply(t), expected(t), t);
+});
+
 it("plot(…).scale(name) promotes the given zero option to the domain", async () => {
   const penguins = await d3.csv("data/penguins.csv", d3.autoType);
   const plot = Plot.dotX(penguins, {x: "body_mass_g"}).plot({x: {zero: true}});
@@ -702,6 +719,74 @@ it("plot(…).scale('color') can return a “polylinear” piecewise linear scal
     type: "linear",
     domain: [0, 150, 500],
     range: ["yellow", "blue", "black"],
+    interpolate: d3.interpolateRgb,
+    clamp: false
+  });
+});
+
+it("plot(…).scale('color') ignores extra domain elements with an explicit range", () => {
+  const plot = assert.warns(
+    () =>
+      Plot.cellX([100, 200, 300, 400], {fill: Plot.identity}).plot({
+        color: {type: "linear", domain: [0, 100, 200], range: ["red", "blue"]}
+      }),
+    /domain contains extra/
+  );
+  scaleEqual(plot.scale("color"), {
+    type: "linear",
+    domain: [0, 100],
+    range: ["red", "blue"],
+    interpolate: d3.interpolateRgb,
+    clamp: false
+  });
+});
+
+it("plot(…).scale('color') ignores extra range elements with an explicit range", () => {
+  const plot = assert.warns(
+    () =>
+      Plot.cellX([100, 200, 300, 400], {fill: Plot.identity}).plot({
+        color: {type: "linear", domain: [0, 100], range: ["red", "blue", "green"]}
+      }),
+    /range contains extra/
+  );
+  scaleEqual(plot.scale("color"), {
+    type: "linear",
+    domain: [0, 100],
+    range: ["red", "blue"],
+    interpolate: d3.interpolateRgb,
+    clamp: false
+  });
+});
+
+it("plot(…).scale('color') ignores extra domain elements with an explicit range when reversed", () => {
+  const plot = assert.warns(
+    () =>
+      Plot.cellX([100, 200, 300, 400], {fill: Plot.identity}).plot({
+        color: {type: "linear", domain: [0, 100, 200], range: ["red", "blue"], reverse: true}
+      }),
+    /domain contains extra/
+  );
+  scaleEqual(plot.scale("color"), {
+    type: "linear",
+    domain: [100, 0],
+    range: ["red", "blue"],
+    interpolate: d3.interpolateRgb,
+    clamp: false
+  });
+});
+
+it("plot(…).scale('color') ignores extra range elements with an explicit range when reversed", () => {
+  const plot = assert.warns(
+    () =>
+      Plot.cellX([100, 200, 300, 400], {fill: Plot.identity}).plot({
+        color: {type: "linear", domain: [0, 100], range: ["red", "blue", "green"], reverse: true}
+      }),
+    /range contains extra/
+  );
+  scaleEqual(plot.scale("color"), {
+    type: "linear",
+    domain: [100, 0],
+    range: ["red", "blue"],
     interpolate: d3.interpolateRgb,
     clamp: false
   });
