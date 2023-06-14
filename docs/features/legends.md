@@ -41,7 +41,7 @@ Plot.plot({
 
 The legend above is a *swatches* legend because the *color* scale is *ordinal* (with a *categorical* scheme). When the *color* scale is continuous, a *ramp* legend with a smooth gradient is generated instead. The plot below of global average surface temperature ([GISTEMP](https://data.giss.nasa.gov/gistemp/)) uses a *diverging* *color* scale to indicate the deviation from the 1951–1980 average in degrees Celsius.
 
-:::plot defer https://observablehq.com/@observablehq/plot-colored-scatterplot
+:::plot defer https://observablehq.com/@observablehq/plot-diverging-color-scatterplot
 ```js
 Plot.plot({
   color: {
@@ -118,7 +118,7 @@ Continuous color legends are rendered as a ramp, and can be configured with the 
 * **marginLeft** - the legend’s left margin
 * **opacity** - the ramp’s fill opacity
 
-The **style** legend option allows custom styles to override Plot’s defaults; it has the same behavior as in Plot’s top-level [plot options](./plots.md).
+The **style** legend option allows custom styles to override Plot’s defaults; it has the same behavior as in Plot’s top-level [plot options](./plots.md). The **className** option is suffixed with *-ramp* or *-swatches*, reflecting the **legend** type.
 
 ## legend(*options*)
 
