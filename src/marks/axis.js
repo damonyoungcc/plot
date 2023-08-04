@@ -1,11 +1,11 @@
-import {extent, format, timeFormat, utcFormat} from "d3";
+import {extent, format, timeFormat, timeTicks, utcFormat, utcTicks} from "d3";
 import {formatDefault} from "../format.js";
 import {marks} from "../mark.js";
 import {radians} from "../math.js";
 import {arrayify, constant, identity, keyword, number, range, valueof} from "../options.js";
-import {isIterable, isNoneish, isTemporal, orderof} from "../options.js";
+import {isIterable, isNoneish, isTemporal, isTimeInterval, orderof} from "../options.js";
 import {maybeColorChannel, maybeNumberChannel, maybeRangeInterval} from "../options.js";
-import {isTemporalScale} from "../scales.js";
+import {isOrdinalScale, isTemporalScale} from "../scales.js";
 import {offset} from "../style.js";
 import {formatTimeTicks, isTimeYear, isUtcYear} from "../time.js";
 import {initializer} from "../transforms/basic.js";
@@ -512,8 +512,10 @@ function axisMark(mark, k, ariaLabel, data, options, initialize) {
     const initializeFacets = data == null && (k === "fx" || k === "fy");
     const {[k]: scale} = scales;
     if (!scale) throw new Error(`missing scale: ${k}`);
-    let {ticks, tickSpacing, interval} = options;
-    if (isTemporalScale(scale) && typeof ticks === "string") (interval = ticks), (ticks = undefined);
+    let {ticks, tickSpacing = k === "x" ? 80 : 35, interval} = options;
+    // TODO what if ticks is a time interval implementation?
+    // TODO allow ticks to be a function?
+    if (isTemporalish(scale) && typeof ticks === "string") (interval = ticks), (ticks = undefined);
     if (data == null) {
       if (isIterable(ticks)) {
         data = arrayify(ticks);
@@ -531,12 +533,30 @@ function axisMark(mark, k, ariaLabel, data, options, initialize) {
             data = interval.range(min, interval.offset(interval.floor(max))); // inclusive max
           } else {
             const [min, max] = extent(scale.range());
-            ticks = (max - min) / (tickSpacing === undefined ? (k === "x" ? 80 : 35) : tickSpacing);
+            ticks = (max - min) / tickSpacing;
             data = scale.ticks(ticks);
           }
         }
       } else {
         data = scale.domain();
+        // ordinal time
+        // TODO determine whether the interval is utc or local time?
+        // TODO assert that the interval is one of utcTick’s known intervals?
+        // TODO add ceil to the RangeIntervalImplementation interface?
+        if (isTimeInterval(scale.interval)) {
+          const type = "utc";
+          const [start, stop] = extent(data);
+          if (interval) {
+            data = maybeRangeInterval(interval, type).range(start, stop);
+            data = data.map(scale.interval.ceil ?? scale.interval.floor, scale.interval);
+          } else {
+            if (ticks === undefined) {
+              const [min, max] = extent(scale.range());
+              ticks = (max - min) / tickSpacing;
+            }
+            data = ticks < data.length ? (type === "time" ? timeTicks : utcTicks)(start, stop, ticks) : data;
+          }
+        }
       }
       if (k === "y" || k === "x") {
         facets = [range(data)];
@@ -575,7 +595,7 @@ function inferTextChannel(scale, data, ticks, tickFormat, anchor) {
 // domain (or ticks) are numbers or dates (say because we’re applying a time
 // interval to the ordinal scale), we want Plot’s default formatter.
 export function inferTickFormat(scale, data, ticks, tickFormat, anchor) {
-  return tickFormat === undefined && isTemporalScale(scale)
+  return tickFormat === undefined && isTemporalish(scale)
     ? formatTimeTicks(scale, data, ticks, anchor)
     : scale.tickFormat
     ? scale.tickFormat(isIterable(ticks) ? null : ticks, tickFormat)
@@ -672,5 +692,5 @@ function maybeLabelArrow(labelArrow = "auto") {
 }
 
 function isTemporalish(scale) {
-  return isTemporalScale(scale) || scale.interval != null;
+  return isTemporalScale(scale) || (isOrdinalScale(scale) && isTimeInterval(scale.interval));
 }

@@ -110,7 +110,7 @@ export function isTimeYear(i) {
   return timeYear(date) >= date; // coercing equality
 }
 
-export function formatTimeTicks(scale, data, ticks, anchor) {
+export function formatTimeTicks(scale, data = scale.domain(), ticks, anchor) {
   const format = scale.type === "time" ? timeFormat : utcFormat;
   const template =
     anchor === "left" || anchor === "right"
@@ -145,11 +145,12 @@ export function formatTimeTicks(scale, data, ticks, anchor) {
 // the ticks show the field that is changing. If the ticks are not available,
 // fallback to an approximation based on the desired number of ticks.
 function getTimeTicksInterval(scale, data, ticks) {
-  const medianStep = median(pairs(data, (a, b) => Math.abs(b - a) || NaN));
-  if (medianStep > 0) return formats[bisector(([, step]) => step).right(formats, medianStep, 1, formats.length) - 1][0];
-  const [start, stop] = extent(scale.domain());
-  const count = typeof ticks === "number" ? ticks : 10;
-  const step = Math.abs(stop - start) / count;
+  let step = median(pairs(data, (a, b) => Math.abs(b - a) || NaN));
+  if (!(step > 0)) {
+    const [start, stop] = extent(scale.domain());
+    const count = typeof ticks === "number" ? ticks : 10;
+    step = Math.abs(stop - start) / count;
+  }
   return formats[bisector(([, step]) => Math.log(step)).center(formats, Math.log(step))][0];
 }
 
