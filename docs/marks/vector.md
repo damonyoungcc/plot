@@ -37,7 +37,7 @@ onMounted(() => {
 
 </script>
 
-# Vector mark
+# Vector mark <VersionBadge version="0.4.0" />
 
 The **vector mark** draws little arrows, typically positioned in **x** and **y** quantitative dimensions, with an optional magnitude (**length**) and direction (**rotate**), as in a vector field. For example, the chart below, based on a [LitVis example](https://github.com/gicentre/litvis/blob/main/examples/windVectors.md), shows wind speed and direction for a section of western Europe.
 
@@ -88,7 +88,7 @@ Plot.plot({
 ```
 :::
 
-The **shape** option controls the vector’s appearance, while the **anchor** option positions the vector relative to its anchor point specified in **x** and **y**. The [spike constructor](#spike) sets the **shape** to *spike* and the **anchor** to *start*. For example, this can be used to produce a [spike map](https://observablehq.com/@observablehq/plot-spike) of U.S. county population.
+The **shape** option <VersionBadge version="0.6.2" /> controls the vector’s appearance, while the **anchor** option positions the vector relative to its anchor point specified in **x** and **y**. The [spike constructor](#spike) sets the **shape** to *spike* and the **anchor** to *start*. For example, this can be used to produce a [spike map](https://observablehq.com/@observablehq/plot-spike) of U.S. county population.
 
 :::plot defer https://observablehq.com/@observablehq/plot-spike-map-example
 ```js
@@ -192,7 +192,7 @@ Plot.vectorY(cars.map((d) => d["economy (mpg)"]))
 
 Equivalent to [vector](#vector) except that if the **y** option is not specified, it defaults to the identity function and assumes that *data* = [*y₀*, *y₁*, *y₂*, …].
 
-## spike(*data*, *options*) {#spike}
+## spike(*data*, *options*) <VersionBadge version="0.6.2" /> {#spike}
 
 ```js
 Plot.spike(counties, Plot.geoCentroid({length: (d) => d.properties.population}))

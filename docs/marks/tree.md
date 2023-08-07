@@ -30,7 +30,7 @@ function indent() {
 
 </script>
 
-# Tree mark
+# Tree mark <VersionBadge version="0.4.3" />
 
 The **tree mark** produces tree diagrams using the [tree transform](../transforms/tree.md). It is a [composite mark](../features/marks.md#marks), consisting of a [link](./link.md) to render links from parent to child, an optional [dot](./dot.md) for nodes, and one or two [text](./text.md) for node labels. The link mark uses the [treeLink transform](../transforms/tree.md#treeLink), while the dot and text marks use the [treeNode transform](../transforms/tree.md#treeNode).
 
@@ -157,7 +157,7 @@ The following options are supported:
 
 Any additional *options* are passed through to the constituent link, dot, and text marks and their corresponding treeLink or treeNode transform.
 
-The **textLayout** option controls how text labels are anchored to the node. Two layouts are supported:
+The **textLayout** option <VersionBadge version="0.6.9" /> controls how text labels are anchored to the node. Two layouts are supported:
 
 * *mirrored* - leaf-node labels are left-anchored, and non-leaf nodes right-anchored
 * *normal* - all labels are left-anchored

@@ -218,7 +218,7 @@ The default **width** is 640. On Observable, the width can be set to the [standa
 Plot does not adjust margins automatically to make room for long tick labels. If your *y* axis labels are too long, you can increase the **marginLeft** to make more room. Also consider using a different **tickFormat** for short labels (*e.g.*, `s` for SI prefix notation), or a scale **transform** (say to convert units to millions or billions).
 :::
 
-The **aspectRatio** option<a id="aspectratio" class="header-anchor" href="#aspectratio" aria-label="Permalink to &quot;aspectRatio&quot;"></a>, if not null, computes a default **height** such that a variation of one unit in the *x* dimension is represented by the corresponding number of pixels as a variation in the *y* dimension of one unit.
+The **aspectRatio** option<a id="aspectRatio" class="header-anchor" href="#aspectRatio" aria-label="Permalink to &quot;aspectRatio&quot;"></a> <VersionBadge version="0.6.4" />, if not null, computes a default **height** such that a variation of one unit in the *x* dimension is represented by the corresponding number of pixels as a variation in the *y* dimension of one unit.
 
 <p>
   <label class="label-input">
@@ -269,6 +269,8 @@ Unitless numbers ([quirky lengths](https://www.w3.org/TR/css-values-4/#deprecate
 :::
 
 The generated SVG element has a class name which applies a default stylesheet. Use the top-level **className** option to specify that class name.
+
+The **clip** option <VersionBadge pr="1792" /> determines the default clipping behavior if the [mark **clip** option](./marks.md#mark-options) is not specified; set it to true to enable clipping. This option does not affect [axis](../marks/axis.md), [grid](../marks/grid.md), and [frame](../marks/frame.md) marks, whose **clip** option defaults to false.
 
 The **document** option specifies the [document](https://developer.mozilla.org/en-US/docs/Web/API/Document) used to create plot elements. It defaults to window.document, but can be changed to another document, say when using a virtual DOM implementation for server-side rendering in Node.
 
